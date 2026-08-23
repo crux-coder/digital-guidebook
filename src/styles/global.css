@@ -23,7 +23,7 @@ html { scroll-behavior: smooth; background: var(--atlas); }
 body { margin: 0; min-width: 320px; color: var(--chalk); background: var(--atlas); font-family: var(--sans); font-size: 16px; line-height: 1.5; text-rendering: optimizeLegibility; }
 body::before { position: fixed; z-index: 20; top: 0; right: 0; left: 0; height: 2px; background: var(--yellow); content: ''; pointer-events: none; }
 a { color: inherit; text-decoration: none; }
-button, input { font: inherit; }
+button, input, select { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 svg { display: block; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
@@ -114,6 +114,30 @@ svg { display: block; }
 .row-arrow { display: grid; color: var(--yellow); place-items: center; }
 .empty-state { margin: 1.5rem 0 0; color: var(--muted); }
 
+.routes-directory { position: relative; min-height: calc(100vh - 4.5rem); overflow: hidden; border-bottom: 1px solid var(--line); isolation: isolate; }
+.routes-directory::before { position: absolute; inset: 0; z-index: -1; background-image: linear-gradient(rgba(104,130,122,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(104,130,122,.045) 1px, transparent 1px); background-size: 46px 46px; content: ''; pointer-events: none; }
+.routes-directory-inner { width: min(calc(100% - (var(--content-gutter) * 2)), var(--content-max)); margin-inline: auto; padding: clamp(3.5rem,6vw,5.5rem) 0 5.5rem; }
+.routes-directory-intro { margin-bottom: 2rem; }
+.routes-directory-intro h1 { margin: 0; font-family: var(--display); font-size: clamp(3.8rem,5vw,4.5rem); font-weight: 700; letter-spacing: -.035em; line-height: .9; text-transform: uppercase; }
+.routes-directory-intro p { margin: 1rem 0 0; color: #d5dcda; font-size: 1.05rem; }
+.route-filters { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)) auto; align-items: end; gap: 1.25rem clamp(.8rem,1.6vw,1.5rem); }
+.directory-search { min-height: 3.3rem; padding: 0 1rem; display: grid; grid-column: 1 / -1; grid-template-columns: 2rem minmax(0,1fr); align-items: center; color: #b2bdb8; background: rgba(3,16,15,.68); border: 1px solid #566963; transition: border-color 180ms ease, box-shadow 180ms ease; }
+.directory-search:focus-within { border-color: var(--yellow); box-shadow: 0 0 0 3px rgba(255,213,31,.12); }
+.directory-search input { width: 100%; min-width: 0; height: 3.2rem; padding: 0 .55rem; color: var(--chalk); background: transparent; border: 0; outline: 0; }
+.directory-search input::placeholder { color: #89968f; }
+.filter-field { display: grid; gap: .55rem; color: #aeb9b4; font-family: var(--mono); font-size: .68rem; font-weight: 500; letter-spacing: .07em; text-transform: uppercase; }
+.filter-field select { width: 100%; min-height: 3.2rem; padding: 0 2.6rem 0 .9rem; color: var(--chalk); background-color: rgba(3,16,15,.75); background-image: linear-gradient(45deg,transparent 50%,#b9c3bf 50%),linear-gradient(135deg,#b9c3bf 50%,transparent 50%); background-position: calc(100% - 1rem) 1.35rem,calc(100% - .72rem) 1.35rem; background-repeat: no-repeat; background-size: .3rem .3rem,.3rem .3rem; border: 1px solid #4e625c; border-radius: 0; outline: 0; appearance: none; text-transform: none; transition: border-color 180ms ease, box-shadow 180ms ease; }
+.filter-field select:focus { border-color: var(--yellow); box-shadow: 0 0 0 3px rgba(255,213,31,.11); }
+.filters-reset { min-height: 3.2rem; padding: 0 .25rem; display: inline-flex; align-items: center; gap: .55rem; color: var(--yellow); background: transparent; border: 0; cursor: pointer; font-size: .85rem; font-weight: 600; white-space: nowrap; }
+.filters-reset:hover, .filters-reset:focus-visible { color: #ffe568; }
+.directory-count { margin: 1.35rem 0 .65rem; color: #c3ccc8; font-size: .9rem; }
+.directory-table .route-head { min-height: 2.35rem; }
+.directory-table .route-item { min-height: 3.9rem; scroll-margin-top: 1rem; }
+.directory-table .route-topo { height: 2.8rem; }
+.directory-empty { padding: 3.5rem 1rem; color: var(--muted); border: 1px solid var(--line); border-top: 0; text-align: center; }
+.directory-empty strong { color: var(--chalk); font-size: 1.05rem; }
+.directory-empty p { margin: .45rem 0 0; }
+
 .contribution-section { padding: 4.2rem var(--content-gutter) 4.8rem; overflow: hidden; border-bottom: 1px solid var(--line); }
 .contribution-intro { margin-bottom: 1rem; display: grid; grid-template-columns: 1.2fr 1fr; align-items: start; gap: 3rem; }
 .contribution-intro p { margin: .35rem 0 0; color: #d9dfdc; font-size: 1.1rem; line-height: 1.35; }
@@ -176,6 +200,8 @@ svg { display: block; }
   .route-row { grid-template-columns: 6.5rem 1.15fr .9fr .55fr .62fr .8fr 1.5rem; column-gap: .8rem; }
   .revision-log article { grid-template-columns: 4rem minmax(0,1fr) 12rem 6.2rem; }
   .site-footer { grid-template-columns: 1.2fr .65fr .65fr 1fr; gap: 2rem; }
+  .route-filters { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .filters-reset { justify-self: start; }
 }
 
 @media (max-width: 760px) {
@@ -204,6 +230,15 @@ svg { display: block; }
   .auth-form-wrap { border-top: 1px solid var(--line); border-right: 0; border-left: 0; }
   .auth-form { max-width: none; padding: 3.5rem 1.25rem 4rem; }
   .routes-section, .contribution-section, .revision-section { padding: 3.2rem 1.25rem; }
+  .routes-directory-inner { width: calc(100% - 2.5rem); padding: 3.5rem 0 4rem; }
+  .routes-directory-intro h1 { max-width: 7ch; font-size: clamp(4rem,18vw,5.5rem); }
+  .routes-directory-intro p { font-size: .95rem; }
+  .route-filters { grid-template-columns: 1fr; gap: 1rem; }
+  .directory-search { grid-column: 1; }
+  .filters-reset { width: 100%; min-height: 2.8rem; justify-content: flex-start; }
+  .directory-count { margin-top: 1.6rem; }
+  .directory-table .route-item { min-height: auto; }
+  .directory-table .route-topo { height: 4.6rem; }
   .section-heading-row { align-items: flex-start; flex-direction: column; }
   .routes-section h2, .contribution-section h2, .revision-section h2 { font-size: 3.25rem; }
   .route-head { display: none; }

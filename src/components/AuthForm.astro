@@ -89,6 +89,10 @@ const isLogin = mode === 'login';
   }
 
   function translateAuthError(errorMessage: string) {
+    if (/invalid api key|invalid apikey/i.test(errorMessage)) return 'Supabase publishable ključ nije ispravan za ovaj projekt.';
+    if (/email address not authorized/i.test(errorMessage)) return 'Slanje auth emailova nije podešeno za ovu adresu. Potrebno je povezati vlastiti SMTP servis.';
+    if (/captcha/i.test(errorMessage)) return 'CAPTCHA provjera nije uspjela. Osvježi stranicu i pokušaj ponovo.';
+    if (/signups? (are )?(not allowed|disabled)/i.test(errorMessage)) return 'Registracija je trenutno isključena u postavkama projekta.';
     if (/invalid login credentials/i.test(errorMessage)) return 'Email ili lozinka nisu ispravni.';
     if (/email not confirmed/i.test(errorMessage)) return 'Prvo potvrdi email adresu putem poruke koju smo poslali.';
     if (/already registered|user already exists/i.test(errorMessage)) return 'Račun s ovom email adresom već postoji.';

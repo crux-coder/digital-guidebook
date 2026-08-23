@@ -1,6 +1,5 @@
 ---
-import { Image } from 'astro:assets';
-import heroImage from '../assets/hero-izgorjela-gruda.png';
+import heroImage from '../assets/hero-izgorjela-gruda-optimized.webp';
 ---
 
 <section class="hero" aria-labelledby="hero-title">
@@ -14,7 +13,7 @@ import heroImage from '../assets/hero-izgorjela-gruda.png';
     <h1 id="hero-title">Svi smjerovi.<br />Jedna zajednica.</h1>
     <p>Pronađi provjerene informacije o smjerovima — ili pomozi da vodič bude još bolji.</p>
 
-    <form class="route-search" role="search" aria-label="Pretraga penjačkih ruta">
+    <form class="route-search" role="search" aria-label="Pretraga penjačkih ruta" action="/rute" method="get">
       <label class="sr-only" for="route-query">Pretraži rute, penjališta ili grad</label>
       <span class="search-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" width="24" height="24">
@@ -38,13 +37,14 @@ import heroImage from '../assets/hero-izgorjela-gruda.png';
   </div>
 
   <div class="hero-media">
-    <Image
-      src={heroImage}
+    <img
+      src={heroImage.src}
       alt="Vapnenački masiv Izgorjele grude sa visokim penjačkim stijenama"
-      format="webp"
-      quality={88}
+      width={heroImage.width}
+      height={heroImage.height}
       loading="eager"
       fetchpriority="high"
+      decoding="async"
     />
     <span class="hero-image-title">Izgorjela gruda</span>
   </div>

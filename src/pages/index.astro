@@ -18,39 +18,4 @@ const description = 'Zajednički digitalni topo-atlas penjališta i penjačkih r
     <TrustSection />
   </main>
   <SiteFooter />
-
-  <script>
-    const searchForm = document.querySelector<HTMLFormElement>('.route-search');
-    const searchInput = document.querySelector<HTMLInputElement>('#route-query');
-    const rows = [...document.querySelectorAll<HTMLElement>('.route-item')];
-    const status = document.querySelector<HTMLElement>('.search-status');
-    const emptyState = document.querySelector<HTMLElement>('.empty-state');
-
-    function routeLabel(count: number) {
-      if (count === 1) return '1 pronađena ruta';
-      if (count > 1 && count < 5) return `${count} pronađene rute`;
-      return `${count} pronađenih ruta`;
-    }
-
-    function filterRoutes() {
-      const query = searchInput?.value.trim().toLocaleLowerCase('bs') ?? '';
-      let visibleCount = 0;
-
-      rows.forEach((row) => {
-        const isVisible = !query || row.dataset.search?.includes(query);
-        row.hidden = !isVisible;
-        if (isVisible) visibleCount += 1;
-      });
-
-      if (status) status.textContent = query ? routeLabel(visibleCount) : '3 izdvojene rute';
-      if (emptyState) emptyState.hidden = visibleCount !== 0;
-    }
-
-    searchInput?.addEventListener('input', filterRoutes);
-    searchForm?.addEventListener('submit', (event) => {
-      event.preventDefault();
-      filterRoutes();
-      document.querySelector('#rute')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  </script>
 </BaseLayout>

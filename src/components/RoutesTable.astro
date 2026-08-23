@@ -1,45 +1,14 @@
 ---
-import { Image } from 'astro:assets';
-import johnnyTopo from '../assets/topo-johnny.png';
-import bijeliTopo from '../assets/topo-bijeli-ocnjak.png';
-import mohikanacTopo from '../assets/topo-posljednji-mohikanac.png';
-
-const routes = [
-  {
-    image: johnnyTopo,
-    name: 'Johnny',
-    location: 'Blagaj',
-    grade: '6b+',
-    length: '22 m',
-    bolts: '9 boltova',
-  },
-  {
-    image: bijeliTopo,
-    name: 'Bijeli očnjak',
-    location: 'Romanija',
-    grade: '7a',
-    length: '28 m',
-    bolts: '12 boltova',
-  },
-  {
-    image: mohikanacTopo,
-    name: 'Posljednji Mohikanac',
-    location: 'Pecka',
-    grade: '6c',
-    length: '18 m',
-    bolts: '7 boltova',
-  },
-];
+import { recentlyAddedRoutes } from '../data/routes';
 ---
 
 <section class="routes-section" id="rute" aria-labelledby="routes-heading">
   <div class="section-heading-row">
-    <h2 id="routes-heading">Popularno na stijeni</h2>
-    <a href="#rute">Pogledaj sve rute <span aria-hidden="true">→</span></a>
-    <p class="search-status sr-only" aria-live="polite">3 izdvojene rute</p>
+    <h2 id="routes-heading">Nedavno dodano</h2>
+    <a href="/rute">Pogledaj sve rute <span aria-hidden="true">→</span></a>
   </div>
 
-  <div class="route-table" role="table" aria-label="Popularne penjačke rute">
+  <div class="route-table" role="table" aria-label="Nedavno dodani penjački smjerovi">
     <div class="route-row route-head" role="row">
       <span role="columnheader">Topo</span>
       <span role="columnheader">Ruta</span>
@@ -50,21 +19,20 @@ const routes = [
       <span role="columnheader" class="sr-only">Detalji</span>
     </div>
 
-    {routes.map((route) => (
+    {recentlyAddedRoutes.map((route) => (
       <a
         class="route-row route-item"
-        href="#o-vodicu"
+        href={`/rute#${route.slug}`}
         role="row"
-        data-search={`${route.name} ${route.location} ${route.grade}`.toLocaleLowerCase('bs')}
       >
         <span role="cell" class="route-topo" aria-hidden="true">
-          <Image src={route.image} alt="" width={110} height={72} format="webp" quality={70} loading="lazy" />
+          <img src={route.image.src} alt="" width="110" height="72" loading="lazy" decoding="async" />
         </span>
         <strong role="cell" data-label="Ruta">{route.name}</strong>
         <span role="cell" data-label="Penjalište">{route.location}</span>
         <strong role="cell" data-label="Ocjena" class="route-grade">{route.grade}</strong>
-        <span role="cell" data-label="Dužina">{route.length}</span>
-        <span role="cell" data-label="Oprema">{route.bolts}</span>
+        <span role="cell" data-label="Dužina">{route.length} m</span>
+        <span role="cell" data-label="Oprema">{route.bolts} boltova</span>
         <span role="cell" class="row-arrow" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="22" height="22">
             <path d="M5 12h13M14 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -73,6 +41,4 @@ const routes = [
       </a>
     ))}
   </div>
-
-  <p class="empty-state" hidden>Nema ruta za unesenu pretragu. Pokušaj s drugim nazivom ili ocjenom.</p>
 </section>
