@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import AuthForm from '../components/AuthForm.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+const title = 'Registracija | balkanbeta';
+const description = 'Kreiraj balkanbeta račun i pomozi zajednici da održava tačne podatke o penjačkim smjerovima.';
+---
+
+<BaseLayout {title} {description}>
+  <Header />
+  <AuthForm mode="signup" />
+  <SiteFooter />
+</BaseLayout>

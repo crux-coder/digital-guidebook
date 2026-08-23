@@ -7,12 +7,22 @@
       </svg>
       <span>balkanbeta</span>
     </a>
-    <nav aria-label="Glavna navigacija">
-      <a href="#penjalista">Penjališta</a>
-      <a href="#rute">Rute</a>
-      <a href="#kako-doprinijeti">Kako doprinijeti</a>
-      <a href="#o-vodicu">O vodiču</a>
+    <nav class="main-nav" aria-label="Glavna navigacija">
+      <a href="/#penjalista">Penjališta</a>
+      <a href="/#rute">Rute</a>
+      <a href="/#kako-doprinijeti">Kako doprinijeti</a>
+      <a href="/#o-vodicu">O vodiču</a>
     </nav>
+    <div class="auth-nav" aria-label="Korisnički račun">
+      <div class="auth-guest-links" data-auth-guest>
+        <a href="/login">Prijava</a>
+        <a class="auth-signup-link" href="/signup">Registracija</a>
+      </div>
+      <div class="auth-user-links" data-auth-user hidden>
+        <span class="auth-user-email" data-auth-email></span>
+        <button type="button" data-auth-signout>Odjava</button>
+      </div>
+    </div>
     <span class="header-target" aria-hidden="true">
       <svg viewBox="0 0 36 36">
         <circle cx="18" cy="18" r="7" fill="none" stroke="currentColor" stroke-width="1.5"></circle>
@@ -21,3 +31,40 @@
     </span>
   </div>
 </header>
+
+<script>
+  import { isSupabaseConfigured, supabase } from '../lib/supabase';
+
+  const guestLinks = document.querySelector<HTMLElement>('[data-auth-guest]');
+  const userLinks = document.querySelector<HTMLElement>('[data-auth-user]');
+  const emailLabel = document.querySelector<HTMLElement>('[data-auth-email]');
+  const signOutButton = document.querySelector<HTMLButtonElement>('[data-auth-signout]');
+
+  function renderAuthState(email?: string) {
+    const signedIn = Boolean(email);
+    if (guestLinks) guestLinks.hidden = signedIn;
+    if (userLinks) userLinks.hidden = !signedIn;
+    if (emailLabel) emailLabel.textContent = email ?? '';
+  }
+
+  const authClient = supabase;
+
+  if (isSupabaseConfigured && authClient) {
+    const { data } = await authClient.auth.getSession();
+    renderAuthState(data.session?.user.email);
+
+    authClient.auth.onAuthStateChange((_event, session) => {
+      renderAuthState(session?.user.email);
+    });
+
+    signOutButton?.addEventListener('click', async () => {
+      signOutButton.disabled = true;
+      const { error } = await authClient.auth.signOut();
+      if (error) {
+        signOutButton.disabled = false;
+        return;
+      }
+      window.location.href = '/';
+    });
+  }
+</script>

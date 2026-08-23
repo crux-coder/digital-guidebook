@@ -1,0 +1,178 @@
+---
+interface Props {
+  mode: 'login' | 'signup';
+}
+
+const { mode } = Astro.props;
+const isLogin = mode === 'login';
+---
+
+<main class="auth-page">
+  <section class="auth-shell" aria-labelledby="auth-title">
+    <div class="auth-intro">
+      <span class="coordinate-mark" aria-hidden="true">
+        <svg viewBox="0 0 28 28">
+          <circle cx="14" cy="14" r="5" fill="none" stroke="currentColor"></circle>
+          <path d="M14 1v8m0 10v8M1 14h8m10 0h8" stroke="currentColor"></path>
+        </svg>
+      </span>
+      <h1 id="auth-title">{isLogin ? 'Dobro došao nazad.' : 'Pridruži se zajednici.'}</h1>
+      <p>
+        {isLogin
+          ? 'Prijavi se da predlažeš izmjene, pratiš doprinose i pomažeš da podaci ostanu tačni.'
+          : 'Kreiraj račun i doprinesi otvorenom vodiču penjačkih smjerova širom Balkana.'}
+      </p>
+      <div class="auth-route-line" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <div class="auth-form-wrap">
+      <form class="auth-form" data-auth-form data-mode={mode} novalidate>
+        <div class="auth-form-heading">
+          <span>{isLogin ? 'Prijava' : 'Novi račun'}</span>
+          <strong>01 / {isLogin ? '01' : '02'}</strong>
+        </div>
+
+        <label for="email">Email adresa</label>
+        <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required placeholder="ime@primjer.ba" />
+
+        <label for="password">Lozinka</label>
+        <input id="password" name="password" type="password" autocomplete={isLogin ? 'current-password' : 'new-password'} required minlength="8" placeholder="Najmanje 8 znakova" />
+
+        {!isLogin && (
+          <>
+            <label for="password-confirmation">Potvrdi lozinku</label>
+            <input id="password-confirmation" name="passwordConfirmation" type="password" autocomplete="new-password" required minlength="8" placeholder="Ponovi lozinku" />
+          </>
+        )}
+
+        <p class="auth-message" data-auth-message aria-live="polite" hidden></p>
+
+        <button class="auth-submit" type="submit" data-auth-submit>
+          <span>{isLogin ? 'Prijavi se' : 'Kreiraj račun'}</span>
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <path d="M4 12h15M14 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+
+        <p class="auth-switch">
+          {isLogin ? 'Nemaš račun?' : 'Već imaš račun?'}
+          <a href={isLogin ? '/signup' : '/login'}>{isLogin ? 'Registruj se' : 'Prijavi se'}</a>
+        </p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<script>
+  import { isSupabaseConfigured, supabase } from '../lib/supabase';
+
+  const form = document.querySelector<HTMLFormElement>('[data-auth-form]');
+  const submitButton = document.querySelector<HTMLButtonElement>('[data-auth-submit]');
+  const submitLabel = submitButton?.querySelector('span');
+  const message = document.querySelector<HTMLElement>('[data-auth-message]');
+  const mode = form?.dataset.mode as 'login' | 'signup' | undefined;
+
+  const defaultButtonLabel = mode === 'login' ? 'Prijavi se' : 'Kreiraj račun';
+
+  function showMessage(text: string, type: 'error' | 'success') {
+    if (!message) return;
+    message.textContent = text;
+    message.dataset.type = type;
+    message.hidden = false;
+  }
+
+  function setLoading(loading: boolean) {
+    if (submitButton) submitButton.disabled = loading;
+    if (submitLabel) submitLabel.textContent = loading ? 'Molimo sačekaj…' : defaultButtonLabel;
+  }
+
+  function translateAuthError(errorMessage: string) {
+    if (/invalid login credentials/i.test(errorMessage)) return 'Email ili lozinka nisu ispravni.';
+    if (/email not confirmed/i.test(errorMessage)) return 'Prvo potvrdi email adresu putem poruke koju smo poslali.';
+    if (/already registered|user already exists/i.test(errorMessage)) return 'Račun s ovom email adresom već postoji.';
+    if (/password/i.test(errorMessage)) return 'Lozinka ne ispunjava sigurnosne zahtjeve.';
+    return 'Nešto nije uspjelo. Pokušaj ponovo.';
+  }
+
+  function safeReturnPath() {
+    const value = new URLSearchParams(window.location.search).get('returnTo');
+    return value?.startsWith('/') && !value.startsWith('//') ? value : '/';
+  }
+
+  const confirmed = new URLSearchParams(window.location.search).get('confirmed');
+  if (mode === 'login' && confirmed === '1') {
+    showMessage('Email je potvrđen. Sada se možeš prijaviti.', 'success');
+  }
+
+  if (isSupabaseConfigured && supabase) {
+    const { data } = await supabase.auth.getSession();
+    if (data.session) window.location.replace(safeReturnPath());
+  }
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    message?.setAttribute('hidden', '');
+
+    if (!form.reportValidity()) return;
+
+    const formData = new FormData(form);
+    const email = String(formData.get('email') ?? '').trim();
+    const password = String(formData.get('password') ?? '');
+
+    if (password.length < 8) {
+      showMessage('Lozinka mora imati najmanje 8 znakova.', 'error');
+      return;
+    }
+
+    if (mode === 'signup') {
+      const passwordConfirmation = String(formData.get('passwordConfirmation') ?? '');
+      if (password !== passwordConfirmation) {
+        showMessage('Lozinke se ne podudaraju.', 'error');
+        return;
+      }
+    }
+
+    if (!isSupabaseConfigured || !supabase) {
+      showMessage('Supabase još nije povezan. Dodaj javni URL projekta i publishable ključ u lokalno okruženje.', 'error');
+      return;
+    }
+
+    setLoading(true);
+
+    if (mode === 'login') {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        showMessage(translateAuthError(error.message), 'error');
+        setLoading(false);
+        return;
+      }
+      window.location.assign(safeReturnPath());
+      return;
+    }
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/login?confirmed=1`,
+      },
+    });
+
+    if (error) {
+      showMessage(translateAuthError(error.message), 'error');
+      setLoading(false);
+      return;
+    }
+
+    if (data.session) {
+      window.location.assign('/');
+      return;
+    }
+
+    form.reset();
+    showMessage('Provjeri email. Poslali smo ti link za potvrdu računa.', 'success');
+    setLoading(false);
+  });
+</script>
