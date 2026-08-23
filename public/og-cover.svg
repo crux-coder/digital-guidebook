@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#061513"/>
+  <g fill="none" stroke="#344844" stroke-width="1" opacity=".55">
+    <path d="M-40 490c170-210 300-125 390-35s190 70 290-90 255-220 390-90 165 120 245 18"/>
+    <path d="M-30 540c155-185 285-110 380-20s205 65 300-92 250-190 365-75 175 120 250 45"/>
+    <path d="M-60 435c185-225 325-155 415-62s178 68 285-92 260-230 395-105 160 115 235 20"/>
+  </g>
+  <path d="M770 560 930 175l86 177 54-95 130 303H770Z" fill="#d7dad4" opacity=".92"/>
+  <path d="M882 520c36-84 61-144 67-205 7-64 48-84 76-145" fill="none" stroke="#ffd51f" stroke-width="6"/>
+  <circle cx="882" cy="520" r="8" fill="#ffd51f"/><circle cx="955" cy="290" r="8" fill="#ffd51f"/><circle cx="1025" cy="170" r="8" fill="#ffd51f"/>
+  <path d="M73 91 101 39l19 31 16-24 44 45H73Z" fill="none" stroke="#ffd51f" stroke-width="4"/>
+  <text x="200" y="91" fill="#f3f5ef" font-family="Arial,sans-serif" font-size="48" font-weight="700">balkanbeta</text>
+  <text x="72" y="270" fill="#f3f5ef" font-family="Arial Narrow,Arial,sans-serif" font-size="82" font-weight="700">SVI SMJEROVI.</text>
+  <text x="72" y="365" fill="#f3f5ef" font-family="Arial Narrow,Arial,sans-serif" font-size="92" font-weight="700">JEDNA ZAJEDNICA.</text>
+  <text x="76" y="450" fill="#aab5b0" font-family="Arial,sans-serif" font-size="27">Digitalni topo-atlas penjačkih ruta u BiH</text>
+</svg>

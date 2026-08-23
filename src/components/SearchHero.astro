@@ -1,0 +1,54 @@
+---
+import { Image } from 'astro:assets';
+import heroImage from '../assets/hero-izgorjela-gruda.png';
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-copy">
+    <span class="coordinate-mark" aria-hidden="true">
+      <svg viewBox="0 0 28 28">
+        <circle cx="14" cy="14" r="5" fill="none" stroke="currentColor"></circle>
+        <path d="M14 1v8m0 10v8M1 14h8m10 0h8" stroke="currentColor"></path>
+      </svg>
+    </span>
+    <h1 id="hero-title">Svi smjerovi.<br />Jedna zajednica.</h1>
+    <p>Pronađi provjerene informacije o smjerovima — ili pomozi da vodič bude još bolji.</p>
+
+    <form class="route-search" role="search" aria-label="Pretraga penjačkih ruta">
+      <label class="sr-only" for="route-query">Pretraži rute, penjališta ili grad</label>
+      <span class="search-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"></circle>
+          <path d="m16.2 16.2 4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+        </svg>
+      </span>
+      <input id="route-query" name="q" type="search" placeholder="Pretraži rute, penjališta ili grad" autocomplete="off" />
+      <button type="submit" aria-label="Pokreni pretragu">
+        <svg viewBox="0 0 24 24" width="25" height="25" aria-hidden="true">
+          <path d="M4 12h15M14 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </button>
+    </form>
+    <a class="button-primary" href="#rute">
+      Istraži rute
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+        <path d="M4 12h15M14 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+    </a>
+  </div>
+
+  <div class="hero-media">
+    <Image
+      src={heroImage}
+      alt="Vapnenački masiv Izgorjele grude sa visokim penjačkim stijenama"
+      format="webp"
+      quality={88}
+      loading="eager"
+      fetchpriority="high"
+    />
+    <span class="hero-image-title">Izgorjela gruda</span>
+  </div>
+  <div class="hero-scale" aria-hidden="true">
+    <span>17°20′</span><span>17°30′</span><span>17°40′</span><span>17°50′</span><span>18°00′</span>
+  </div>
+</section>
